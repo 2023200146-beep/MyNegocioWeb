@@ -1,14 +1,19 @@
 {
-  "name": "node-pedidos",
+  "name": "my-negocio-web",
   "version": "1.0.0",
-  "description": "Sistema de pedidos con Node.js",
+  "description": "Sistema de pedidos My Negocio",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
-  
-  "devDependencies": {
-    "nodemon": "^3.0.2"
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "mysql2": "^3.6.0",
+    "ejs": "^3.1.9"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

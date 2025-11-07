@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Negocio WEB</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        button { 
+            padding: 8px 15px; 
+            margin: 5px; 
+            cursor: pointer; 
+            border: none;
+            border-radius: 4px;
+        }
+        .btn-primary { background-color: #007bff; color: white; }
+        input[type="number"] { width: 60px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-control { 
+            width: 100%; 
+            padding: 8px; 
+            border: 1px solid #ced4da; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+        }
+        .cabecera-pedido {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 5px;
+            text-decoration: none;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .btn-info { background-color: #17a2b8; color: white; }
+        .btn-warning { background-color: #ffc107; color: black; }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-primary { background-color: #007bff; color: white; }
+    </style>
+</head>
+<body>
+    <h1>My Negocio WEB</h1>
+
+    <div class="cabecera-pedido">
+        <h2>Consulta de Clientes por País</h2>
+     
+        <form action="/catalogo" method="GET">
+            <table>
+                <thead>
+                    <tr>
+                        <th>PAÍSES</th>
+                        <th>CLIENTES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <select name="cboPais" id="cboPais" class="form-control" size="8" onchange="this.form.submit()">
+                                <option value="">-- Elige un País --</option>
+                                <% if (paises && paises.length) { %>
+                                    <% paises.forEach(function(pais) { %>
+                                        <option value="<%= pais.Pais %>" 
+                                                <%= pais.Pais == paisSeleccionado ? 'selected' : '' %>>
+                                            <%= pais.Pais %>
+                                        </option>
+                                    <% }); %>
+                                <% } %>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="lstCliente" id="lstCliente" class="form-control" size="8">
+                                <option value="">-- Elige un Cliente --</option>
+                                <% if (clientes && clientes.length) { %>
+                                    <% clientes.forEach(function(cliente) { %>
+                                        <option value="<%= cliente.IdCliente %>" 
+                                                <%= cliente.IdCliente == clienteSeleccionado ? 'selected' : '' %>>
+                                            <%= cliente.NombreEmpresa %>
+                                        </option>
+                                    <% }); %>
+                                <% } else if (paisSeleccionado) { %>
+                                    <option value="">No hay clientes en este país</option>
+                                <% } %>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: center;">
+                            <button type="button" class="btn-primary" onclick="limpiarConsulta()">
+                                Limpiar Consulta
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    <!-- Menú de Consultas -->
+    <div class="cabecera-pedido">
+        <h2>Sistema de Consultas</h2>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="/consulta-pedidos" class="btn btn-info">Consulta Pedidos</a>
+            <a href="/consulta-pedidos-cliente" class="btn btn-warning">Pedidos por Cliente</a>
+            <a href="/consulta-categorias" class="btn btn-success">Consulta Categorías</a>
+            <a href="/consulta-empleados" class="btn btn-primary">Consulta Empleados</a>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 2: SISTEMA DE PEDIDOS -->
+    <div class="cabecera-pedido">
+        <h2>Realizar Pedido</h2>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1;">
+                <label for="cboEmpleado">Empleado:</label>
+                <select id="cboEmpleado" class="form-control" required>
+                    <option value="">-- Seleccione un empleado --</option>
+                    <% if (empleados && empleados.length) { %>
+                        <% empleados.forEach(function(empleado) { %>
+                            <option value="<%= empleado.IdEmpleado %>" 
+                                    <%= empleado.IdEmpleado == empleadoSeleccionado ? 'selected' : '' %>>
+                                <%= empleado.Nombre %> <%= empleado.Apellidos %> - <%= empleado.Cargo %>
+                            </option>
+                        <% }); %>
+                    <% } %>
+                </select>
+            </div>
+            
+            <div class="form-group" style="flex: 1;">
+                <label for="fechaPedido">Fecha del Pedido:</label>
+                <input type="date" id="fechaPedido" class="form-control" 
+                       value="<%= fechaSeleccionada || new Date().toISOString().split('T')[0] %>" required>
+            </div>
+            
+            <div class="form-group" style="align-self: end;">
+                <button type="button" class="btn-primary" onclick="mostrarDetallePedido()" 
+                        style="padding: 10px 20px;">
+                    Ver Detalle del Pedido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Catálogo de productos -->
+    <div>
+        <h2>Catálogo de Productos</h2>
+        
+        <div class="form-group">
+            <label for="cboCategoria">Categoría:</label>
+            <select name="cboCategoria" id="cboCategoria" class="form-control" onchange="cambiarCategoria()">
+                <option value="0">-- Elige una categoria --</option>
+                <% if (categorias && categorias.length) { %>
+                    <% categorias.forEach(function(categoria) { %>
+                        <option value="<%= categoria.IdCategoria %>" 
+                                <%= categoria.IdCategoria == idcat ? 'selected' : '' %>>
+                            <%=categoria.NombreCategoria %>
+                        </option>
+                    <% }); %>
+                <% } %>
+            </select>
+        </div>
+        
+        <h3><%=nombcat %></h3>
+        
+        <% if (productos && productos.length) { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>PRODUCTO</th>
+                        <th>PRESENTACION</th>
+                        <th>PRECIO</th>
+                        <th>STOCK</th>
+                        <th>ACCION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <% productos.forEach(function(producto) { %>
+                    <tr>
+                        <td><%= producto.IdProducto %></td>
+                        <td><%= producto.NombreProducto %></td>
+                        <td><%= producto.CantidadPorUnidad %></td>
+                        <td>S/ <%= producto.PrecioUnidad %></td>
+                        <td><%= producto.UnidadesEnExistencia %></td>
+                        <td>
+                            <input type="number" id="cant_<%= producto.IdProducto %>" 
+                                   value="1" min="1" max="<%= producto.UnidadesEnExistencia %>"
+                                   style="width: 60px;">
+                            <button type="button" class="btn-primary" 
+                                    onclick="agregarAlPedido('<%= producto.IdProducto %>')">
+                                Agregar
+                            </button>
+                        </td>
+                    </tr>
+                <% }); %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p>No hay productos en esta categoría.</p>
+        <% } %>  
+    </div>
+
+    <script>
+        // Funciones para la consulta de clientes
+        function limpiarConsulta() {
+            window.location.href = '/catalogo';
+        }
+
+        // Funciones para el sistema de pedidos
+        function cambiarCategoria() {
+            const categoriaId = document.getElementById('cboCategoria').value;
+            const paisSeleccionado = document.getElementById('cboPais') ? document.getElementById('cboPais').value : '';
+            const empleadoSeleccionado = document.getElementById('cboEmpleado') ? document.getElementById('cboEmpleado').value : '';
+            const clienteSeleccionado = document.getElementById('lstCliente') ? document.getElementById('lstCliente').value : '';
+            const fechaSeleccionada = document.getElementById('fechaPedido') ? document.getElementById('fechaPedido').value : '';
+            
+            let url = '/catalogo?cboCategoria=' + categoriaId;
+            
+            // Preservar todos los parámetros
+            if (paisSeleccionado) {
+                url += '&cboPais=' + encodeURIComponent(paisSeleccionado);
+            }
+            if (empleadoSeleccionado) {
+                url += '&cboEmpleado=' + encodeURIComponent(empleadoSeleccionado);
+            }
+            if (clienteSeleccionado) {
+                url += '&lstCliente=' + encodeURIComponent(clienteSeleccionado);
+            }
+            if (fechaSeleccionada) {
+                url += '&fechaPedido=' + encodeURIComponent(fechaSeleccionada);
+            }
+            
+            window.location.href = url;
+        }
+
+        function mostrarDetallePedido() {
+            const empleado = document.getElementById('cboEmpleado').value;
+            const fecha = document.getElementById('fechaPedido').value;
+            const cliente = document.getElementById('lstCliente').value;
+            const pais = document.getElementById('cboPais').value;
+            
+            if (!empleado) {
+                alert('Por favor, seleccione un empleado');
+                return;
+            }
+            
+            if (!fecha) {
+                alert('Por favor, seleccione una fecha');
+                return;
+            }
+            
+            if (!cliente || cliente === "") {
+                alert('Por favor, seleccione un cliente');
+                return;
+            }
+            
+            // Redirigir con todos los parámetros
+            window.location.href = `/detalle-pedido?empleado=${encodeURIComponent(empleado)}&fecha=${encodeURIComponent(fecha)}&cliente=${encodeURIComponent(cliente)}&pais=${encodeURIComponent(pais)}`;
+        }
+
+        async function agregarAlPedido(idProducto) {
+        const cantidad = document.getElementById('cant_' + idProducto).value;
+        
+        // Validar cantidad
+        if (cantidad <= 0) {
+            alert('La cantidad debe ser mayor a 0');
+            return;
+        }
+        
+        const maxStock = document.getElementById('cant_' + idProducto).max;
+        if (cantidad > maxStock) {
+            alert('No hay suficiente stock disponible');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/agregar-pedido', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    idProducto: idProducto, 
+                    cantidad: parseInt(cantidad) 
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Producto agregado al pedido');
+                // Resetear la cantidad a 1 después de agregar
+                document.getElementById('cant_' + idProducto).value = 1;
+            } else {
+                alert('Error: ' + result.error);
+                console.log('Error detallado:', result); // Agrega esta línea
+            }
+        } catch (error) {
+            console.error('Error completo:', error); // Agrega esta línea
+            alert('Error al agregar producto al pedido: ' + error.message);
+        }
+    }
+    </script>
+</body>
+</html>

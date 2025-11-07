@@ -34,6 +34,11 @@ router.get('/mostrar-pedido', (req, res) => {
 
 router.post('/agregar-pedido', async (req, res) => {
     try {
+        console.log('=== AGREGAR PEDIDO ===');
+        console.log('Session ID:', req.sessionID);
+        console.log('Pedido antes:', req.session.pedido);
+        console.log('Datos recibidos:', req.body);
+
         const { idProducto, cantidad } = req.body;
         
         const productos = await queryDB('SELECT * FROM producto WHERE IdProducto = ?', [idProducto]);
@@ -49,10 +54,8 @@ router.post('/agregar-pedido', async (req, res) => {
 
         const precio = producto.PrecioUnidad;
         const impComp = precio * cantidad;
-        
-        
-        const descuentoFloat = producto.Descuento || 0; 
-        const impDscto = impComp * descuentoFloat; 
+        const descuentoFloat = producto.Descuento || 0;
+        const impDscto = impComp * descuentoFloat;
         const impVta = impComp - impDscto;
 
         const productoExistente = req.session.pedido.find(item => item.id == idProducto);
@@ -72,9 +75,12 @@ router.post('/agregar-pedido', async (req, res) => {
                 impComp: impComp,
                 impDscto: impDscto,
                 impVta: impVta,
-                descuentoFloat: descuentoFloat 
+                descuentoFloat: descuentoFloat
             });
         }
+
+        console.log('Pedido después:', req.session.pedido);
+        console.log('=== FIN AGREGAR PEDIDO ===');
 
         res.json({ success: true, message: 'Producto agregado al pedido' });
     } catch (error) {

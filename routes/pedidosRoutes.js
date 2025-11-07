@@ -2,7 +2,7 @@ const express = require('express');
 const { queryDB } = require('../config/database');
 const router = express.Router();
 
-// Detalle del pedido (antes de guardar) - CORREGIDO PARA MOSTRAR DESCUENTO
+
 router.get('/detalle-pedido', async (req, res) => {
     try {
         const { empleado, fecha, cliente, pais } = req.query;
@@ -55,36 +55,49 @@ router.get('/detalle-pedido', async (req, res) => {
         res.status(500).send(`Error interno del servidor: ${error.message}`);
     }
 });
-// Guardar pedido 
+
 router.post('/guardar-pedido', async (req, res) => {
     try {
+        console.log('Iniciando guardado de pedido...');
+        console.log('Pedido en sesión:', req.session.pedido);
+        console.log('Datos recibidos:', req.body);
+
         const { idEmpleado, fechaPedido, idCliente } = req.body;
         const pedido = req.session.pedido || [];
 
         if (pedido.length === 0) {
+            console.log('Error: No hay productos en el pedido');
             return res.json({ success: false, error: 'No hay productos en el pedido' });
         }
 
         if (!idEmpleado) {
+            console.log('Error: Falta empleado');
             return res.json({ success: false, error: 'Seleccione un empleado' });
         }
 
         if (!idCliente) {
+            console.log('Error: Falta cliente');
             return res.json({ success: false, error: 'Seleccione un cliente' });
         }
 
+        console.log('Buscando cliente...');
         const clientes = await queryDB('SELECT * FROM cliente WHERE IdCliente = ?', [idCliente]);
         const clienteInfo = clientes[0];
 
         if (!clienteInfo) {
+            console.log('Error: Cliente no encontrado');
             return res.json({ success: false, error: 'Cliente no encontrado' });
         }
 
+        console.log('Obteniendo máximo ID de pedido...');
         const maxIdResult = await queryDB('SELECT MAX(IdPedido) as Ultimo FROM pedido');
         const configID = Number(maxIdResult[0].Ultimo || 0);
         const nuevoIdPedido = configID + 1;
 
+        console.log('Nuevo ID de pedido:', nuevoIdPedido);
+
         const totalPedido = pedido.reduce((sum, item) => sum + item.impVta, 0);
+        console.log('Total del pedido:', totalPedido);
 
         await queryDB(
             `INSERT INTO pedido 
@@ -106,9 +119,11 @@ router.post('/guardar-pedido', async (req, res) => {
             ]
         );
 
+        console.log('Pedido insertado en BD');
+
         for (const item of pedido) {
-         
             const descuento = item.impComp > 0 ? (item.impDscto / item.impComp) : 0;
+            console.log(`Insertando producto: ${item.producto}, Cantidad: ${item.cantidad}`);
             
             await queryDB(
                 'INSERT INTO detalles_de_pedido (IdPedido, IdProducto, PrecioUnidad, Cantidad, Descuento) VALUES (?, ?, ?, ?, ?)',
@@ -122,6 +137,7 @@ router.post('/guardar-pedido', async (req, res) => {
         }
 
         req.session.pedido = [];
+        console.log('Pedido guardado exitosamente. ID:', nuevoIdPedido);
 
         res.json({ 
             success: true, 
@@ -191,6 +207,27 @@ router.get('/detalle-pedido-completo', async (req, res) => {
     } catch (error) {
         console.error('Error en detalle-pedido-completo:', error);
         res.status(500).send('Error del servidor: ' + error.message);
+    }
+});
+
+router.get('/test-db', async (req, res) => {
+    try {
+        console.log('Probando conexión a BD...');
+        
+        const result = await queryDB('SELECT 1 + 1 AS test');
+        console.log('Test BD exitoso:', result);
+        
+        const pedidosCount = await queryDB('SELECT COUNT(*) as total FROM pedido');
+        console.log('Total pedidos en BD:', pedidosCount[0].total);
+        
+        res.json({ 
+            success: true, 
+            test: result[0].test,
+            totalPedidos: pedidosCount[0].total
+        });
+    } catch (error) {
+        console.error('Test BD falló:', error);
+        res.json({ success: false, error: error.message });
     }
 });
 

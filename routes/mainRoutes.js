@@ -1,6 +1,8 @@
 const express = require('express');
 const { queryDB } = require('../config/database');
 const router = express.Router();
+const fs = require('fs');
+const path = require('path');
 
 
 router.get('/inicio', (req, res) => {
@@ -47,6 +49,25 @@ router.get('/catalogo', async (req, res) => {
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Error del servidor');
+    }
+});
+router.get('/debug-files', (req, res) => {
+    try {
+        const viewsPath = path.join(__dirname, '..', 'views');
+        const files = fs.readdirSync(viewsPath);
+        res.json({
+            success: true,
+            viewsPath: viewsPath,
+            files: files,
+            exists: fs.existsSync(viewsPath)
+        });
+    } catch (error) {
+        res.json({
+            success: false,
+            error: error.message,
+            viewsPath: path.join(__dirname, '..', 'views'),
+            currentDir: __dirname
+        });
     }
 });
 

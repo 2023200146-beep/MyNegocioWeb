@@ -49,6 +49,5 @@ app.use('/', consultasRoutes);
 
 
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Servidor ejecutándose en puerto ${PORT}`);
-    console.log(`Entorno: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Servidor ejecutándose en puerto ${PORT}`); 
 });

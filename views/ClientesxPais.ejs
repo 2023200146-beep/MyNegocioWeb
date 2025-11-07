@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Negocio WEB</title>
+  <style>
+    * { position: relative; }
+    body { background: #64f0aa; margin-top: 30px; font-family: Arial, sans-serif; }
+    .container { margin: 0 auto; width: 90%; }
+
+ .t-PaisCliente {
+      width: 40%;
+      border: 1px solid #295C80;
+      border-collapse: collapse;
+      background-color: #F5F5F5;
+    }
+ .t-PaisCliente thead td {
+      border: none;
+      text-align: center;
+      font-weight: bold;
+      padding: 10px 0;
+      background-color: #2980B9;
+      color: white;
+    }
+ .t-PaisCliente th, .t-products td {
+      padding: 6px;
+      text-align: center;
+      border: 1px solid #ccc;
+    }
+ .t-PaisCliente tbody tr:nth-child(odd) { background-color: #E9E9E9; height: 25px; }
+ .t-PaisCliente tbody tr:hover { background-color: skyblue; }
+
+  </style>
+</head>
+
+<body>
+  <form action="/" method="POST">
+
+    <h1>Clientes x Pais</h1>
+
+        <table  class="t-PaisCliente" border="1" width="40%">
+            <thead>
+                <tr>
+                    <th>PAISES</th>
+                    <th>CLIENTES</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+    <select name="cboPais" id="cboPais" size="10">
+      <option value="0">-- Elige un Pais --</option>
+      <% if (paises && paises.length) { %>
+        <% paises.forEach(function(pais) { %>
+          <option value="<%= pais.Pais %>">
+            <%= pais.Pais %>
+          </option>
+        <% }); %>
+      <% } %>
+    </select>
+                    </td>
+                    <td>
+<% if (clientes && clientes.length) { %>
+    <select name="lstCliente" id="lstCliente" size="10">
+      <option value="0">-- Elige un Cliente --</option>
+        <% clientes.forEach(function(cliente) { %>
+          <option value="<%= cliente.IdCliente %>">
+            <%= cliente. NombreEmpresa %>
+          </option>
+        <% }); %>
+      <% } %>
+    </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                         <button type="submit">Ver Clientes</button>
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
+
+   
+
+   
+    <br><br>
+  </form>
+
+</body>
+</html>

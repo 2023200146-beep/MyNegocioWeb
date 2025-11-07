@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Empleados - My Negocio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .employee-card { transition: transform 0.2s; }
+        .employee-card:hover { transform: translateY(-3px); }
+        .badge-cargo { font-size: 0.7em; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">Consulta de Empleados</h1>
+                
+       
+                <div class="row mb-4">
+                    <div class="col-md-2">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h6>Total Empleados</h6>
+                                <div class="h4 text-primary"><%= empleados.length %></div>
+                            </div>
+                        </div>
+                    </div>
+                    <% Object.entries(cargosCount).forEach(([cargo, count]) => { %>
+                        <div class="col-md-2">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h6><%= cargo %></h6>
+                                    <div class="h4 text-success"><%= count %></div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Lista de Empleados</h5>
+                        <a href="/" class="btn btn-secondary">Volver al inicio</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <% empleados.forEach(empleado => { %>
+                                <div class="col-md-6 col-lg-4 mb-3">
+                                    <div class="card employee-card h-100">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">👤 <%= empleado.Nombre %> <%= empleado.Apellidos %></h6>
+                                            <span class="badge bg-primary badge-cargo"><%= empleado.Cargo %></span>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="mb-1"><strong>ID:</strong> <%= empleado.IdEmpleado %></p>
+                                            <p class="mb-1"><strong>Tratamiento:</strong> <%= empleado.Tratamiento %></p>
+                                            <p class="mb-1"><strong>Fecha Nac.:</strong> <%= empleado.FechaNacimiento %></p>
+                                            <p class="mb-1"><strong>Fecha Contrato:</strong> <%= empleado.FechaContratacion %></p>
+                                            <p class="mb-1"><strong>Dirección:</strong> <%= empleado.Direccion %></p>
+                                            <p class="mb-1"><strong>Ciudad:</strong> <%= empleado.Ciudad %></p>
+                                            <p class="mb-1"><strong>País:</strong> <%= empleado.Pais %></p>
+                                            <p class="mb-0"><strong>Teléfono:</strong> <%= empleado.Telefono %></p>
+                                            <% if (empleado.Extension) { %>
+                                                <p class="mb-0"><strong>Extensión:</strong> <%= empleado.Extension %></p>
+                                            <% } %>
+                                        </div>
+                                        <div class="card-footer">
+                                            <small class="text-muted">
+                                                <% if (empleado.Jefe) { %>
+                                                    Jefe: <%= empleado.Jefe %>
+                                                <% } else { %>
+                                                    Sin jefe asignado
+                                                <% } %>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>
+
+       
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Resumen en Tabla</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre Completo</th>
+                                        <th>Cargo</th>
+                                        <th>Tratamiento</th>
+                                        <th>Fecha Contrato</th>
+                                        <th>Ciudad</th>
+                                        <th>País</th>
+                                        <th>Teléfono</th>
+                                        <th>Jefe</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% empleados.forEach(empleado => { %>
+                                        <tr>
+                                            <td><%= empleado.IdEmpleado %></td>
+                                            <td>
+                                                <strong><%= empleado.Nombre %> <%= empleado.Apellidos %></strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-primary"><%= empleado.Cargo %></span>
+                                            </td>
+                                            <td><%= empleado.Tratamiento %></td>
+                                            <td><%= empleado.FechaContratacion %></td>
+                                            <td><%= empleado.Ciudad %></td>
+                                            <td><%= empleado.Pais %></td>
+                                            <td>
+                                                <%= empleado.Telefono %>
+                                                <% if (empleado.Extension) { %>
+                                                    <br><small>Ext: <%= empleado.Extension %></small>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (empleado.Jefe) { %>
+                                                    <%= empleado.Jefe %>
+                                                <% } else { %>
+                                                    <span class="badge bg-secondary">Sin jefe</span>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

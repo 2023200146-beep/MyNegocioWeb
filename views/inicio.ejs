@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Negocio - Sistema de Pedidos</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            margin-bottom: 0;
+            border-radius: 0;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #4ff72580 0%, #72e713 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        .feature-section {
+            padding: 60px 0;
+            background-color: white;
+        }
+        .feature-box {
+            text-align: center;
+            padding: 30px;
+            margin-bottom: 30px;    
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+        }
+        .feature-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+        .image-gallery {
+            padding: 60px 0;
+            background-color: #f8f9fa;
+        }
+        .gallery-item {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .gallery-image {
+            width: 100%;
+            height: 250px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            border: 2px solid #dee2e6;
+        }
+        .gallery-image.placeholder {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/inicio">
+                <strong>My Negocio</strong>
+            </a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="/inicio">Inicio</a></li>
+            
+           
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    Pedidos
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="/Catalogo">Realizar Pedido</a></li>
+                    
+                </ul>
+            </li>
+            
+       
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    Consultas
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="/consulta-pedidos">Consulta de Pedidos</a></li>
+                    <li><a href="/consulta-pedidos-cliente">Pedidos por Cliente</a></li>
+                    <li><a href="/consulta-categorias">Consulta de Categorías</a></li>
+                    <li><a href="/consulta-empleados">Consulta de Empleados</a></li>
+                </ul>
+            </li>
+            
+            
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    Reportes
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#" style="color: #999; cursor: not-allowed;">ejp</a></li>
+                    <li><a href="#" style="color: #999; cursor: not-allowed;">ejp</a></li>
+                    <li><a href="#" style="color: #999; cursor: not-allowed;">ejp</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+
+<div class="hero-section">
+    <div class="container">
+        <h1>Bienvenido a My Negocio</h1>
+    
+        <a href="/Catalogo" class="btn btn-primary btn-lg">Comenzar a Realizar Pedidos</a>
+    </div>
+</div>
+
+
+<div class="feature-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon"></div>
+                    <h3>Gestión de Pedidos</h3>
+                    <p>Realiza pedidos de manera rápida y eficiente. Selecciona productos, clientes y empleados en un solo lugar.</p>
+                    <a href="/Catalogo" class="btn btn-outline-primary">Realizar Pedido</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon"></div>
+                    <h3>Sistema de Consultas</h3>
+                    <p>Consulta pedidos, clientes, categorías y empleados con filtros avanzados y paginación.</p>
+                  
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon"></div>
+                    <h3>Reportes</h3>
+                    <p>Genera reportes detallados de ventas, stock y clientes la toma de decisiones.</p>
+                    <a href="#" class="btn btn-outline-secondary" style="cursor: not-allowed;">En proceso</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="image-gallery">
+    <div class="container">
+        <h2 class="text-center mb-4">Nuestros Servicios</h2>
+        <div class="row">
+            
+            <div class="col-md-4">
+                <div class="gallery-item">
+                   <img src="/images/imagen_tienda.png" alt="Gestión de Clientes" style="width:90%; height:auto;">
+                    <h4>Control dinamico</h4>
+                    <p>Operamos todos los procesos en tiempo real, con una interfaz simple</p>
+                </div>
+            </div>
+            
+            
+            <div class="col-md-4">
+                <div class="gallery-item">
+                   <img src="/images/logo_negocio.png" alt="Gestión de Clientes" style="width:90%; height:auto;">
+                    <h4>Negocio Innovador</h4>
+                    <p>Somos una nueva empresa en busca de otorgar las mejores experiencias. Porque creemos que en cada proyecto hay personas con sueños y metas</p>
+                </div>
+            </div>
+            
+            
+            <div class="col-md-4">
+                <div class="gallery-item">
+                   <img src="/images/logo_negocio.png" alt="Gestión de Clientes" style="width:90%; height:auto;">
+                    <h4>proceso</h4>
+                    <p>proceso</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+</body>
+</html>

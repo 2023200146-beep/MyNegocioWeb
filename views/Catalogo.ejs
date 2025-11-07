@@ -268,44 +268,45 @@
         }
 
         async function agregarAlPedido(idProducto) {
-            const cantidad = document.getElementById('cant_' + idProducto).value;
-            
-            // Validar cantidad
-            if (cantidad <= 0) {
-                alert('La cantidad debe ser mayor a 0');
-                return;
-            }
-            
-            const maxStock = document.getElementById('cant_' + idProducto).max;
-            if (cantidad > maxStock) {
-                alert('No hay suficiente stock disponible');
-                return;
-            }
-            
-            try {
-                const response = await fetch('/agregar-pedido', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        idProducto: idProducto, 
-                        cantidad: parseInt(cantidad) 
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    alert('Producto agregado al pedido');
-                    // Resetear la cantidad a 1 después de agregar
-                    document.getElementById('cant_' + idProducto).value = 1;
-                } else {
-                    alert('Error: ' + result.error);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al agregar producto al pedido');
-            }
+        const cantidad = document.getElementById('cant_' + idProducto).value;
+        
+        // Validar cantidad
+        if (cantidad <= 0) {
+            alert('La cantidad debe ser mayor a 0');
+            return;
         }
+        
+        const maxStock = document.getElementById('cant_' + idProducto).max;
+        if (cantidad > maxStock) {
+            alert('No hay suficiente stock disponible');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/agregar-pedido', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    idProducto: idProducto, 
+                    cantidad: parseInt(cantidad) 
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Producto agregado al pedido');
+                // Resetear la cantidad a 1 después de agregar
+                document.getElementById('cant_' + idProducto).value = 1;
+            } else {
+                alert('Error: ' + result.error);
+                console.log('Error detallado:', result); // Agrega esta línea
+            }
+        } catch (error) {
+            console.error('Error completo:', error); // Agrega esta línea
+            alert('Error al agregar producto al pedido: ' + error.message);
+        }
+    }
     </script>
 </body>
 </html>

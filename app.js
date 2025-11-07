@@ -2,19 +2,19 @@ const express = require('express');
 const session = require('express-session');
 const path = require('path');
 
-// Importar rutas
 const mainRoutes = require('./routes/mainRoutes');
+const carritoRoutes = require('./routes/carritoRoutes');
 const pedidosRoutes = require('./routes/pedidosRoutes');
 const consultasRoutes = require('./routes/consultasRoutes');
 
 const app = express();
 const PORT = 3000;
 
-// Configuración
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Middleware
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
@@ -27,18 +27,32 @@ app.use(session({
     cookie: { secure: false }
 }));
 
-// Middleware para inicializar el carrito
 app.use((req, res, next) => {
-    if (!req.session.pedido) req.session.pedido = [];
+    if (!req.session.pedido) {
+        req.session.pedido = [];
+    }
     next();
 });
 
-// Usar rutas
-app.use('/', mainRoutes);
-app.use('/', pedidosRoutes);
-app.use('/', consultasRoutes);  
 
-// Iniciar servidor
+app.use('/', mainRoutes);
+app.use('/', carritoRoutes); 
+app.use('/', pedidosRoutes);
+app.use('/', consultasRoutes);
+
+app.get('/debug-routes', (req, res) => {
+    const routes = [];
+    app._router.stack.forEach((middleware) => {
+        if (middleware.route) {
+            routes.push({
+                path: middleware.route.path,
+                methods: Object.keys(middleware.route.methods)
+            });
+        }
+    });
+    res.json({ routes: routes });
+});
 app.listen(PORT, () => {
     console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
 });
+

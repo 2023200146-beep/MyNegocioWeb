@@ -240,5 +240,66 @@ router.get('/consulta-empleados', async (req, res) => {
         res.status(500).send('Error del servidor: ' + error.message);
     }
 });
+// parcial
+router.get('/reporte-ventas', async (req, res) => {
+    try {
+        const { pais, cliente } = req.query;
+        
+        console.log('=== REPORTE VENTAS - PARÁMETROS ===');
+        console.log('País:', pais);
+        console.log('Cliente:', cliente);
+        
+        // Obtener países y clientes para los combos
+        const [paises, clientes] = await Promise.all([
+            queryDB('SELECT DISTINCT Pais FROM cliente ORDER BY Pais'),
+            queryDB('SELECT IdCliente, NombreEmpresa, Pais FROM cliente ORDER BY Pais, NombreEmpresa')
+        ]);
+
+        let resultados = [];
+        
+        // Si hay filtros seleccionados, generar el reporte
+        if (pais && cliente) {
+            console.log('=== EJECUTANDO CONSULTA ===');
+            
+            resultados = await queryDB(`
+                SELECT 
+                    c.IdCategoria,
+                    c.NombreCategoria as Categoria,
+                    SUM(dp.PrecioUnidad * dp.Cantidad) as TotalImporteCompra,
+                    SUM(dp.PrecioUnidad * dp.Cantidad * COALESCE(dp.Descuento, 0)) as TotalImporteDescuento,
+                    SUM(dp.PrecioUnidad * dp.Cantidad * (1 - COALESCE(dp.Descuento, 0))) as TotalImporteVenta
+                FROM detalles_de_pedido dp
+                INNER JOIN pedido p ON dp.IdPedido = p.IdPedido
+                INNER JOIN producto pr ON dp.IdProducto = pr.IdProducto
+                INNER JOIN categoria c ON pr.IdCategoria = c.IdCategoria
+                INNER JOIN cliente cl ON p.IdCliente = cl.IdCliente
+                WHERE cl.IdCliente = ?  -- Solo filtro por cliente, no por país
+                GROUP BY c.IdCategoria, c.NombreCategoria
+                ORDER BY c.NombreCategoria
+            `, [cliente]);  // Solo pasamos el cliente, no el país
+
+            console.log('=== RESULTADOS OBTENIDOS ===');
+            console.log('Número de resultados:', resultados.length);
+            if (resultados.length > 0) {
+                console.log('Primer resultado:', resultados[0]);
+                console.log('Total Importe Compra:', resultados[0].TotalImporteCompra);
+                console.log('Total Importe Descuento:', resultados[0].TotalImporteDescuento);
+                console.log('Total Importe Venta:', resultados[0].TotalImporteVenta);
+            }
+        }
+
+        res.render('reporte-ventas', {
+            paises,
+            clientes,
+            resultados,
+            paisSeleccionado: pais || '',
+            clienteSeleccionado: cliente || ''
+        });
+        
+    } catch (error) {
+        console.error('Error en reporte-ventas:', error);
+        res.status(500).send('Error del servidor: ' + error.message);
+    }
+});
 
 module.exports = router;

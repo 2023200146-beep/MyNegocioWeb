@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Ventas - My Negocio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .table-reporte th { background-color: #343a40; color: white; }
+        .totales-row { background-color: #e8f5e8; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">Reporte de Venta</h1>
+                
+                <!-- Filtros -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Filtros del Reporte</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="GET" class="row g-3">
+                            <div class="col-md-4">
+                                <label for="pais" class="form-label">País</label>
+                                <select class="form-control" id="pais" name="pais" onchange="actualizarClientes()">
+                                    <option value="">-- Seleccione un país --</option>
+                                    <% paises.forEach(p => { %>
+                                        <option value="<%= p.Pais %>" <%= p.Pais == paisSeleccionado ? 'selected' : '' %>>
+                                            <%= p.Pais %>
+                                        </option>
+                                    <% }); %>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="cliente" class="form-label">Cliente</label>
+                                <select class="form-control" id="cliente" name="cliente">
+                                    <option value="">-- Seleccione un cliente --</option>
+                                    <% if (clientes && clientes.length) { %>
+                                        <% clientes.forEach(c => { %>
+                                            <option value="<%= c.IdCliente %>" 
+                                                    data-pais="<%= c.Pais %>"
+                                                    <%= c.IdCliente == clienteSeleccionado ? 'selected' : '' %>>
+                                                <%= c.NombreEmpresa %>
+                                            </option>
+                                        <% }); %>
+                                    <% } %>
+                                </select>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">Ver Reporte</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Resultados -->
+                <% if (resultados.length > 0) { %>
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                Resultados del Reporte 
+                                <span class="badge bg-primary"><%= resultados.length %> categorías</span>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered">
+                                    <thead class="table-reporte">
+                                        <tr>
+                                            <th>ID Categoría</th>
+                                            <th>Categoría</th>
+                                            <th>Total Importe Compra</th>
+                                            <th>Total Importe Descuento</th>
+                                            <th>Total Importe Venta</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% let totalCompra = 0; %>
+                                        <% let totalDescuento = 0; %>
+                                        <% let totalVenta = 0; %>
+                                        
+                                        <% resultados.forEach(row => { %>
+                                            <% 
+                                                totalCompra += parseFloat(row.TotalImporteCompra || 0);
+                                                totalDescuento += parseFloat(row.TotalImporteDescuento || 0);
+                                                totalVenta += parseFloat(row.TotalImporteVenta || 0);
+                                            %>
+                                            <tr>
+                                                <td><%= row.IdCategoria %></td>
+                                                <td><%= row.Categoria %></td>
+                                                <td>S/ <%= parseFloat(row.TotalImporteCompra || 0).toFixed(2) %></td>
+                                                <td class="text-danger">S/ <%= parseFloat(row.TotalImporteDescuento || 0).toFixed(2) %></td>
+                                                <td class="text-success"><strong>S/ <%= parseFloat(row.TotalImporteVenta || 0).toFixed(2) %></strong></td>
+                                            </tr>
+                                        <% }); %>
+                                        
+                                        <!-- Totales -->
+                                        <tr class="totales-row">
+                                            <td colspan="2"><strong>TOTALES</strong></td>
+                                            <td><strong>S/ <%= totalCompra.toFixed(2) %></strong></td>
+                                            <td class="text-danger"><strong>S/ <%= totalDescuento.toFixed(2) %></strong></td>
+                                            <td class="text-success"><strong>S/ <%= totalVenta.toFixed(2) %></strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                <% } else if (paisSeleccionado && clienteSeleccionado) { %>
+                    <div class="alert alert-info text-center">
+                        <h5>No se encontraron ventas para esta combinación</h5>
+                        <p>No hay pedidos registrados para este cliente y país</p>
+                    </div>
+                <% } %>
+                
+                <div class="mt-3">
+                    <a href="/" class="btn btn-secondary">← Volver al Inicio</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function actualizarClientes() {
+            const paisSeleccionado = document.getElementById('pais').value;
+            const selectCliente = document.getElementById('cliente');
+            const opciones = selectCliente.getElementsByTagName('option');
+            
+            // Mostrar/ocultar clientes según el país seleccionado
+            for (let i = 1; i < opciones.length; i++) {
+                const opcion = opciones[i];
+                const paisCliente = opcion.getAttribute('data-pais');
+                
+                if (!paisSeleccionado || paisCliente === paisSeleccionado) {
+                    opcion.style.display = '';
+                } else {
+                    opcion.style.display = 'none';
+                    // Deseleccionar si estaba seleccionado
+                    if (opcion.selected) {
+                        opcion.selected = false;
+                    }
+                }
+            }
+        }
+
+        // Ejecutar al cargar la página
+        document.addEventListener('DOMContentLoaded', actualizarClientes);
+    </script>
+</body>
+</html>
